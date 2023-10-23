@@ -9,11 +9,12 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint  --fix",
     "format:fix": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|tsx|json)\"",
-    "prepare": "husky install",
     "preview": "vite preview"
   },
-  "lint-staged": {
-    "*.tsx": "npm run lint:fix"
+  "husky": {
+    "hooks": {
+      "pre-commit": "prettier --write . && git add -A ."
+    }
   },
   "dependencies": {
     "react": "^18.2.0",
