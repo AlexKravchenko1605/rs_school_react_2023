@@ -1,101 +1,87 @@
-import { Component } from 'react';
-import { Props } from './assets/types';
+import { useEffect, useState } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
 import ButtonWithError from './components/UI/ButtonWithError';
 import CardList from './components/UI/CardList';
 import MyInput from './components/UI/MyInput';
 
-class App extends Component<object, Props> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      queryString: localStorage.getItem('queryString')
-        ? localStorage.getItem('queryString')
-        : 'Enter words',
-      isLoaded: false,
-      noResults: false,
-      items: [],
-    };
-  }
+const App = () => {
+  const [state, setState] = useState({
+    queryString: localStorage.getItem('queryString')
+      ? localStorage.getItem('queryString')
+      : 'Enter words',
+    isLoaded: false,
+    noResults: false,
+    items: [],
+  });
 
-  queryString: string = '';
+  useEffect(() => {
+    fetch('https://swapi.dev/api/planets')
+      .then((response) => response.json())
+      .then((result) =>
+        setState({ ...state, isLoaded: true, items: result.results })
+      );
+  }, [state]);
 
-  updateDate = (e: React.FormEvent) => {
+  const updateDate = (e: React.FormEvent) => {
     e.preventDefault();
 
     localStorage.getItem('queryString')
-      ? localStorage.setItem('queryString', `${this.queryString}`)
-      : localStorage.setItem('queryString', `${this.queryString}`);
+      ? localStorage.setItem('queryString', `${state.queryString}`)
+      : localStorage.setItem('queryString', `${state.queryString}`);
 
-    this.setState({ queryString: `${this.queryString}` });
-    this.setState({
+    setState({ ...state, queryString: `${state.queryString}` });
+    setState({
+      ...state,
       isLoaded: false,
     });
 
-    fetch(`https://swapi.dev/api/planets/?search=${this.queryString}`)
+    fetch(`https://swapi.dev/api/planets/?search=${state.queryString}`)
       .then((res) => res.json())
       .then((result) => {
         result.results.length > 0
-          ? this.setState({
+          ? setState({
+              ...state,
               isLoaded: true,
               items: result.results,
               noResults: false,
             })
-          : this.setState({
-              noResults: true,
-              isLoaded: true,
-            });
+          : setState({ ...state, noResults: true, isLoaded: true });
       });
   };
 
-  updateQueryString = (e: React.FormEvent) => {
+  const updateQueryString = (e: React.FormEvent) => {
     e.preventDefault();
-    this.queryString = (e.target as HTMLInputElement).value;
+    setState({ ...state, queryString: (e.target as HTMLInputElement).value });
   };
 
-  componentDidMount = () => {
-    fetch('https://swapi.dev/api/planets')
-      .then((response) => response.json())
-      .then((result) =>
-        this.setState({
-          isLoaded: true,
-          items: result.results,
-        })
-      );
-  };
+  if (!state.isLoaded) {
+    return <img src="../src/assets/styles/1483.png" />;
+  }
 
-  render() {
-    const { queryString, isLoaded, noResults, items } = this.state;
-
-    if (!isLoaded) {
-      return <img src="../src/assets/styles/1483.png" />;
-    }
-
-    if (noResults) {
-      return (
-        <ErrorBoundary>
-          <ButtonWithError />
-          <MyInput
-            updateData={this.updateDate}
-            updateName={this.updateQueryString}
-            placeholder={queryString}
-          />
-          <p className="try__again">Try again</p>
-        </ErrorBoundary>
-      );
-    }
+  if (state.noResults) {
     return (
       <ErrorBoundary>
         <ButtonWithError />
         <MyInput
-          updateData={this.updateDate}
-          updateName={this.updateQueryString}
-          placeholder={queryString}
+          updateData={updateDate}
+          updateName={updateQueryString}
+          value={state.queryString}
         />
-        <CardList planetState={items} />
+        <p className="try__again">Try again</p>
       </ErrorBoundary>
     );
   }
-}
+  return (
+    <ErrorBoundary>
+      <ButtonWithError />
+      <MyInput
+        updateData={updateDate}
+        updateName={updateQueryString}
+        value={state.queryString}
+      />
+      <CardList planetState={state.items} />
+    </ErrorBoundary>
+  );
+};
 
 export default App;

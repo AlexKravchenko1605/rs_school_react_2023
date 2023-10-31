@@ -5,7 +5,7 @@ const MyInput = (props: Parentsprops) => {
     <form className="text-field__group" onSubmit={props.updateData}>
       <input
         type="input"
-        placeholder={props.placeholder!}
+        value={props.value!}
         className="text-field__input"
         onChange={props.updateName}
       />

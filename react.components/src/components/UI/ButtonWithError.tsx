@@ -1,7 +1,5 @@
 import { useState } from 'react';
-// interface ButtonWidthErrorProps {
-//   hasError: boolean;
-// }
+
 const ButtonWithError = () => {
   const [isError, setError] = useState(false);
 

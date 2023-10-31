@@ -28,7 +28,7 @@ export interface CardListProps {
 }
 
 export interface Parentsprops {
-  placeholder: string | null;
+  value: string | null;
   updateData: (e: React.FormEvent) => void;
   updateName: (e: React.FormEvent) => void;
 }
