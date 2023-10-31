@@ -11,15 +11,24 @@ const App = () => {
       : 'Enter words',
     isLoaded: false,
     noResults: false,
+    next: '',
+    previous: '',
     items: [],
   });
 
   useEffect(() => {
     fetch('https://swapi.dev/api/planets')
       .then((response) => response.json())
-      .then((result) =>
-        setState({ ...state, isLoaded: true, items: result.results })
-      );
+      .then((result) => {
+        setState({
+          ...state,
+          next: result.next,
+          previous: result.previous,
+          isLoaded: true,
+          items: result.results,
+        });
+      })
+      .then(() => console.log(state));
   }, [state]);
 
   const updateDate = (e: React.FormEvent) => {
@@ -41,11 +50,19 @@ const App = () => {
         result.results.length > 0
           ? setState({
               ...state,
+              next: result.next,
+              previous: result.previous,
               isLoaded: true,
               items: result.results,
               noResults: false,
             })
-          : setState({ ...state, noResults: true, isLoaded: true });
+          : setState({
+              ...state,
+              next: result.next,
+              previous: result.previous,
+              noResults: true,
+              isLoaded: true,
+            });
       });
   };
 
