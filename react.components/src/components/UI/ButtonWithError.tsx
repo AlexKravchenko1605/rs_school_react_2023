@@ -1,26 +1,17 @@
-import { Component, ReactNode } from 'react';
-interface ButtonWidthErrorProps {
-  hasError: boolean;
-}
-class ButtonWithError extends Component<object, ButtonWidthErrorProps> {
-  constructor(props: ButtonWidthErrorProps) {
-    super(props);
-    this.state = { hasError: false };
+import { useState } from 'react';
+// interface ButtonWidthErrorProps {
+//   hasError: boolean;
+// }
+const ButtonWithError = () => {
+  const [isError, setError] = useState(false);
+
+  if (isError) {
+    throw new Error('I crashed!');
   }
-  render(): ReactNode {
-    if (this.state.hasError) {
-      throw new Error('I crashed!');
-    }
-    return (
-      <button
-        className="btn_error"
-        onClick={() => {
-          this.setState({ hasError: true });
-        }}
-      >
-        Show Error
-      </button>
-    );
-  }
-}
+  return (
+    <button className="btn_error" onClick={() => setError(!isError)}>
+      Show Error
+    </button>
+  );
+};
 export default ButtonWithError;
