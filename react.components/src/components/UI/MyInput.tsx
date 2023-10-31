@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Parentsprops } from '../../assets/types';
 
 class MyInput extends Component<Parentsprops> {
