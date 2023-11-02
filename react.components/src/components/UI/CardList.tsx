@@ -23,6 +23,7 @@ const CardList = (props: CardListProps) => {
             surface_water={''}
             terrain={''}
             url={''}
+            showInformation={props.showInformation}
           />
         </li>
       ))}

@@ -8,6 +8,10 @@
 li {
   list-style: none;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 .main_css {
   display: flex;
   flex-direction: column;
@@ -128,4 +132,17 @@ button:active {
 
 .btn_error {
   margin-top: 1rem;
+}
+
+.container_pagination {
+  display: flex;
+  width: 50vw;
+  justify-content: space-between;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+button:disabled {
+  background: rgb(173, 163, 209);
 }
