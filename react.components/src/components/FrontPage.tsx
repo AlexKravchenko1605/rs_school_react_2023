@@ -123,7 +123,6 @@ const FronPage = () => {
   };
 
   const showInformation = (planetName: string) => {
-    console.log(planetName);
     setShowSideBarLoader(true);
     doSearch(planetName).then((result) => {
       setShowSideBar(true);
