@@ -1,19 +1,30 @@
-import { Link } from 'react-router-dom';
 import { Planetdescription } from '../../assets/types';
-import { doSearch } from '../../networkActions/networkActions';
+import { FC } from 'react';
+import { Link } from 'react-router-dom';
 
-const Card = (props: Planetdescription) => {
+type Props = {
+  page: number;
+  index: number;
+  description: Planetdescription;
+  showInformation: (planetName: string) => void;
+};
+
+const Card: FC<Props> = ({ page, index, description, showInformation }) => {
+  const handleCardClick = () => {
+    showInformation(description.name);
+  };
+
   return (
     <Link
-      to={props.name}
-      onClick={() => {
-        doSearch(props.name).then((result) => console.log(result));
+      to={{
+        pathname: '' + index,
+        search: `?page=${page}&details=` + description.name,
       }}
     >
-      <div className="card__item">
-        <p>Planet name - {props.name}</p>
-        <p>Population - {props.population}</p>
-        <p>Climate - {props.climate}</p>
+      <div className="card__item" onClick={handleCardClick}>
+        <p>Planet name - {description.name}</p>
+        <p>Population - {description.population}</p>
+        <p>Climate - {description.climate}</p>
       </div>
     </Link>
   );

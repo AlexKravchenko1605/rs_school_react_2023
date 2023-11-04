@@ -92,7 +92,8 @@ button:active {
     transform 0.15s ease;
   margin-bottom: 5px;
 }
-.card__item:hover {
+.card__item:hover,
+.planet_info__wrapper:hover {
   cursor: pointer;
   box-shadow:
     3px 5px 8px rgb(45 35 66 / 40%),
@@ -102,17 +103,21 @@ button:active {
 }
 .list__group {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  row-gap: 20px;
-  column-gap: 20px;
+  grid-template-columns: repeat(3, 220px);
+  grid-gap: 32px;
+  grid-auto-flow: dense;
+  gap: 30px;
   margin-top: 2rem;
-  width: 80vw;
+  max-width: 80vw;
 }
 .try__again {
   font-size: 50px;
 }
-
+.sidebar_loader {
+  margin-top: 14rem !important;
+  width: 150px;
+  height: 150px;
+}
 .main_css img {
   margin-top: calc(58vh - 150px);
 }
@@ -145,4 +150,45 @@ button:active {
 
 button:disabled {
   background: rgb(173, 163, 209);
+}
+.cardsList_wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sidebar_loader {
+  margin-top: 14rem;
+}
+.container {
+  display: flex;
+  justify-content: center;
+  width: 80vw;
+  gap: 30px;
+}
+.plnate_info {
+  display: flex;
+  flex-direction: column;
+  margin-top: 14rem;
+}
+.planet_info__wrapper {
+  padding: 24px;
+  background-color: hsl(66, 100%, 77%);
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+  position: relative;
+}
+
+.planet_info__wrapper h2 {
+  text-align: center;
+}
+
+.close_btn {
+  position: absolute;
+  right: 9px;
+  top: 5px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
 }

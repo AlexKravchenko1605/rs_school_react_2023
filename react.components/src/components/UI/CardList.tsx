@@ -1,29 +1,21 @@
 import { CardListProps } from '../../assets/types';
 import Card from './Card';
+import { FC } from 'react';
 
-const CardList = (props: CardListProps) => {
-  const items = props.planetState;
-
+const CardList: FC<CardListProps> = ({
+  page,
+  planetState: items,
+  showInformation,
+}) => {
   return (
     <ul className="list__group">
-      {items.map((item) => (
+      {items.map((item, index) => (
         <li key={item.name}>
           <Card
-            climate={item.climate}
-            created={''}
-            diameter={''}
-            edited={''}
-            films={[]}
-            gravity={''}
-            name={item.name}
-            orbital_period={''}
-            population={item.population}
-            residents={[]}
-            rotation_period={''}
-            surface_water={''}
-            terrain={''}
-            url={''}
-            showInformation={props.showInformation}
+            page={page}
+            index={index}
+            description={item}
+            showInformation={showInformation}
           />
         </li>
       ))}
