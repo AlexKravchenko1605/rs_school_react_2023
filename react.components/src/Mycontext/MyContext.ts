@@ -37,4 +37,7 @@ export const FunctionalContext = createContext<FunctionalConext>({
   closeWindowClick: function (): void {
     throw new Error('Function not implemented.');
   },
+  closeWindow: function (): void {
+    throw new Error('Function not implemented.');
+  },
 });

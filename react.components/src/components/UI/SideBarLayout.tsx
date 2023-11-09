@@ -3,12 +3,11 @@ import SideBar from './SideBar';
 import { Planetdescription } from '../../assets/types';
 import { FC } from 'react';
 import { doSearch } from '../../networkActions/networkActions';
+import { MyContext } from '../../Mycontext/MyContext';
 
 const SideBarLayout: FC<{
-  items: Planetdescription[];
   active: boolean;
-  closeWindow: () => void;
-}> = ({ items, active, closeWindow }) => {
+}> = ({ active }) => {
   const handleLoader = (item: Planetdescription) => {
     return new Promise((resolve) => {
       doSearch(item.name).then((result) => {
@@ -18,26 +17,26 @@ const SideBarLayout: FC<{
   };
 
   return (
-    <Routes>
-      {items.map((item, index) => {
+    <MyContext.Consumer>
+      {({ state }) => {
         return (
-          <Route
-            key={`planet-route-${item.name}`}
-            path={`${index}`}
-            element={
-              <SideBar
-                item={item}
-                activeWindow={active}
-                closeWindow={closeWindow}
-              />
-            }
-            loader={({}) => {
-              return handleLoader(item);
-            }}
-          />
+          <Routes>
+            {state.items.map((item, index) => {
+              return (
+                <Route
+                  key={`planet-route-${item.name}`}
+                  path={`${index}`}
+                  element={<SideBar item={item} activeWindow={active} />}
+                  loader={({}) => {
+                    return handleLoader(item);
+                  }}
+                />
+              );
+            })}
+          </Routes>
         );
-      })}
-    </Routes>
+      }}
+    </MyContext.Consumer>
   );
 };
 

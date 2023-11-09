@@ -36,9 +36,7 @@ export interface Parentsconfig {
   items: [];
 }
 
-export interface CardListProps {
-  showInformation: (planetName: string) => void;
-}
+export interface CardListProps {}
 
 export type Props = Readonly<Parentsconfig>;
 
@@ -68,4 +66,5 @@ export type FunctionalConext = {
   nextPage: () => void;
   prevPage: () => void;
   closeWindowClick: () => void;
+  closeWindow: () => void;
 };

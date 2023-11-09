@@ -148,14 +148,7 @@ const FronPage = () => {
   let cardsPagination = <img src="../src/assets/styles/1483.png" />;
 
   if (state.isLoaded) {
-    cardsPagination = (
-      <Pagination
-        showInformation={showInformation}
-        nextPage={nextPage}
-        prevPage={prevPage}
-        closeWindowClick={closeWindowClick}
-      />
-    );
+    cardsPagination = <Pagination />;
   }
 
   if (showSideBarLoader) {
@@ -170,6 +163,7 @@ const FronPage = () => {
               showInformation,
               prevPage,
               closeWindowClick,
+              closeWindow,
             }}
           >
             <ButtonWithError />
@@ -199,6 +193,7 @@ const FronPage = () => {
             showInformation,
             prevPage,
             closeWindowClick,
+            closeWindow,
           }}
         >
           <ButtonWithError />
@@ -206,11 +201,7 @@ const FronPage = () => {
           {tryAgain}
           <div className="container">
             {cardsPagination}
-            <SideBarLayout
-              items={state.items}
-              active={showSideBar}
-              closeWindow={closeWindow}
-            />
+            <SideBarLayout active={showSideBar} />
             <Outlet />
           </div>
         </FunctionalContext.Provider>

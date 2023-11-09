@@ -3,7 +3,7 @@ import Card from './Card';
 import { FC } from 'react';
 import { MyContext } from '../../Mycontext/MyContext';
 
-const CardList: FC<CardListProps> = ({ showInformation }) => {
+const CardList: FC<CardListProps> = () => {
   return (
     <MyContext.Consumer>
       {({ state }) => {
@@ -11,11 +11,7 @@ const CardList: FC<CardListProps> = ({ showInformation }) => {
           <ul className="list__group">
             {state.items.map((item, index) => (
               <li key={item.name}>
-                <Card
-                  index={index}
-                  description={item}
-                  showInformation={showInformation}
-                />
+                <Card index={index} description={item} />
               </li>
             ))}
           </ul>
