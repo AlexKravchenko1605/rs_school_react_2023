@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 export type Planetdescription = {
   climate: string;
@@ -37,25 +37,13 @@ export interface Parentsconfig {
 }
 
 export interface CardListProps {
-  page: number;
-  planetState: Planetdescription[];
   showInformation: (planetName: string) => void;
-}
-
-export interface Parentsprops {
-  value: string | '';
-  updateData: (e: React.FormEvent) => void;
-  updateName: (e: React.FormEvent) => void;
 }
 
 export type Props = Readonly<Parentsconfig>;
 
 export interface PaginationProps {
-  items: Planetdescription[];
   showInformation: (planetName: string) => void;
-  value: number;
-  prevBtnDisabled?: boolean;
-  nextBtnDisabled?: boolean;
   nextPage: () => void;
   prevPage: () => void;
   closeWindowClick: () => void;
@@ -66,4 +54,18 @@ export type PlanetList = {
   next: string | null;
   previous: string | null;
   results: [];
+};
+
+export type Mycontext = {
+  state: State;
+  setState: Dispatch<SetStateAction<State>>;
+};
+
+export type FunctionalConext = {
+  updateData: (e: React.FormEvent) => void;
+  updateQueryString: (e: React.FormEvent) => void;
+  showInformation: (planetName: string) => void;
+  nextPage: () => void;
+  prevPage: () => void;
+  closeWindowClick: () => void;
 };

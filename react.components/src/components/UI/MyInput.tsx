@@ -1,17 +1,32 @@
-import { Parentsprops } from '../../assets/types';
 import { FC } from 'react';
+import { FunctionalContext, MyContext } from '../../Mycontext/MyContext';
 
-const MyInput: FC<Parentsprops> = ({ updateData, updateName, value = '' }) => {
+const MyInput: FC = () => {
   return (
-    <form className="text-field__group" onSubmit={updateData}>
-      <input
-        type="input"
-        value={value}
-        className="text-field__input"
-        onChange={updateName}
-      />
-      <button className="text-field__btn">Find</button>
-    </form>
+    <MyContext.Consumer>
+      {({ state }) => {
+        return (
+          <FunctionalContext.Consumer>
+            {({ updateData, updateQueryString }) => {
+              return (
+                <form
+                  className="text-field__group"
+                  onSubmit={(e) => updateData(e)}
+                >
+                  <input
+                    type="input"
+                    value={state.queryString}
+                    className="text-field__input"
+                    onChange={(e) => updateQueryString(e)}
+                  />
+                  <button className="text-field__btn">Find</button>
+                </form>
+              );
+            }}
+          </FunctionalContext.Consumer>
+        );
+      }}
+    </MyContext.Consumer>
   );
 };
 

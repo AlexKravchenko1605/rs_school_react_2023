@@ -7,6 +7,7 @@ import MyInput from './UI/MyInput';
 import { Pagination } from './UI/Pagination';
 import { Outlet, useNavigate } from 'react-router-dom';
 import SideBarLayout from './UI/SideBarLayout';
+import { FunctionalContext, MyContext } from '../Mycontext/MyContext';
 
 const FronPage = () => {
   const [state, setState] = useState<State>({
@@ -149,53 +150,71 @@ const FronPage = () => {
   if (state.isLoaded) {
     cardsPagination = (
       <Pagination
-        items={state.items}
         showInformation={showInformation}
-        value={state.pageNumber}
         nextPage={nextPage}
         prevPage={prevPage}
-        prevBtnDisabled={state.prevBtnDisabled}
-        nextBtnDisabled={state.nextBtnDisabled}
         closeWindowClick={closeWindowClick}
       />
     );
   }
+
   if (showSideBarLoader) {
     return (
       <ErrorBoundary>
-        <ButtonWithError />
-        <MyInput
-          updateData={updateData}
-          updateName={updateQueryString}
-          value={state.queryString}
-        />
-        {tryAgain}
-        <div className="container">
-          {cardsPagination}
-          <img className="sidebar_loader" src="../src/assets/styles/1483.png" />
-        </div>
+        <MyContext.Provider value={{ state, setState }}>
+          <FunctionalContext.Provider
+            value={{
+              updateData,
+              updateQueryString,
+              nextPage,
+              showInformation,
+              prevPage,
+              closeWindowClick,
+            }}
+          >
+            <ButtonWithError />
+            <MyInput />
+            {tryAgain}
+            <div className="container">
+              {cardsPagination}
+              <img
+                className="sidebar_loader"
+                src="../src/assets/styles/1483.png"
+              />
+            </div>
+          </FunctionalContext.Provider>
+        </MyContext.Provider>
       </ErrorBoundary>
     );
   }
 
   return (
     <ErrorBoundary>
-      <ButtonWithError />
-      <MyInput
-        updateData={updateData}
-        updateName={updateQueryString}
-        value={state.queryString}
-      />
-      {tryAgain}
-      <div className="container">
-        {cardsPagination}
-        <SideBarLayout
-          items={state.items}
-          active={showSideBar}
-          closeWindow={closeWindow}
-        />
-        <Outlet />
-      </div>
+      <MyContext.Provider value={{ state, setState }}>
+        <FunctionalContext.Provider
+          value={{
+            updateData,
+            updateQueryString,
+            nextPage,
+            showInformation,
+            prevPage,
+            closeWindowClick,
+          }}
+        >
+          <ButtonWithError />
+          <MyInput />
+          {tryAgain}
+          <div className="container">
+            {cardsPagination}
+            <SideBarLayout
+              items={state.items}
+              active={showSideBar}
+              closeWindow={closeWindow}
+            />
+            <Outlet />
+          </div>
+        </FunctionalContext.Provider>
+      </MyContext.Provider>
     </ErrorBoundary>
   );
 };

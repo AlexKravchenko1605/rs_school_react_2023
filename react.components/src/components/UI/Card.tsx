@@ -1,32 +1,37 @@
 import { Planetdescription } from '../../assets/types';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
+import { MyContext } from '../../Mycontext/MyContext';
 
 type Props = {
-  page: number;
   index: number;
   description: Planetdescription;
   showInformation: (planetName: string) => void;
 };
 
-const Card: FC<Props> = ({ page, index, description, showInformation }) => {
+const Card: FC<Props> = ({ index, description, showInformation }) => {
   const handleCardClick = () => {
     showInformation(description.name);
   };
-
   return (
-    <Link
-      to={{
-        pathname: '' + index,
-        search: `?page=${page}&details=` + description.name,
+    <MyContext.Consumer>
+      {({ state }) => {
+        return (
+          <Link
+            to={{
+              pathname: '' + index,
+              search: `?page=${state.pageNumber}&details=` + description.name,
+            }}
+          >
+            <div className="card__item" onClick={handleCardClick}>
+              <p>Planet name - {description.name}</p>
+              <p>Population - {description.population}</p>
+              <p>Climate - {description.climate}</p>
+            </div>
+          </Link>
+        );
       }}
-    >
-      <div className="card__item" onClick={handleCardClick}>
-        <p>Planet name - {description.name}</p>
-        <p>Population - {description.population}</p>
-        <p>Climate - {description.climate}</p>
-      </div>
-    </Link>
+    </MyContext.Consumer>
   );
 };
 
