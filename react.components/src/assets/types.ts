@@ -36,8 +36,6 @@ export interface Parentsconfig {
   items: [];
 }
 
-export interface CardListProps {}
-
 export type Props = Readonly<Parentsconfig>;
 
 export interface PaginationProps {
