@@ -9,7 +9,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import SideBarLayout from './UI/SideBarLayout';
 import { FunctionalContext, MyContext } from '../Mycontext/MyContext';
 
-const FronPage = () => {
+const FrontPage = () => {
   const [state, setState] = useState<State>({
     queryString: localStorage.getItem('queryString') as string | 'Enter words',
     isLoaded: false,
@@ -145,7 +145,9 @@ const FronPage = () => {
     tryAgain = <p className="try__again">Try again</p>;
   }
 
-  let cardsPagination = <img src="../src/assets/styles/1483.png" />;
+  let cardsPagination = (
+    <img src="../src/assets/styles/1483.png" alt="loader" />
+  );
 
   if (state.isLoaded) {
     cardsPagination = <Pagination />;
@@ -210,4 +212,4 @@ const FronPage = () => {
   );
 };
 
-export default FronPage;
+export default FrontPage;
