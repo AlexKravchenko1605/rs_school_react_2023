@@ -8,6 +8,8 @@ import { Pagination } from './UI/Pagination';
 import { Outlet, useNavigate } from 'react-router-dom';
 import SideBarLayout from './UI/SideBarLayout';
 import { FunctionalContext, MyContext } from '../Mycontext/MyContext';
+import { useDispatch } from 'react-redux';
+import { updateStateWithPlanetListResultCHECK } from '../store/planetSlice';
 
 const FrontPage = () => {
   const [state, setState] = useState<State>({
@@ -26,16 +28,39 @@ const FrontPage = () => {
   const [showSideBarLoader, setShowSideBarLoader] = useState(false);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (localStorage.getItem('queryString')) {
       doSearch(state.queryString).then((result) => {
         updateStateWithPlanetListResult(result, 1);
+
+        () => dispatch(updateStateWithPlanetListResultCHECK(result));
       });
     } else {
-      getAllPlanets().then((result) => {
-        updateStateWithPlanetListResult(result, 1);
-      });
+      getAllPlanets()
+        .then((result) => {
+          updateStateWithPlanetListResult(result, 1);
+          return result;
+        })
+        .then((result) => {
+          console.log('dispatch');
+          console.log(result);
+          dispatch(
+            updateStateWithPlanetListResultCHECK({
+              result: result,
+              targetPageNumber: state.pageNumber,
+              next: result.next,
+              previous: result.previous,
+              isLoaded: true,
+              items: result.results,
+              nextBtnDisabled: !result.next,
+              prevBtnDisabled: !result.previous,
+              pageNumber: 1,
+              noResults: result.results.length === 0,
+            })
+          );
+        });
     }
   }, []);
 
@@ -96,6 +121,7 @@ const FrontPage = () => {
     targetPageNumber: number,
     query?: string
   ) => {
+    console.log('useEffect');
     setState({
       ...state,
       next,
