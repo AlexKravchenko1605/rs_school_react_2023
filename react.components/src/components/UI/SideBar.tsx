@@ -2,10 +2,10 @@ import { FC } from 'react';
 import { Planetdescription } from '../../assets/types';
 import { FunctionalContext } from '../../Mycontext/MyContext';
 
-const SideBar: FC<{
-  item: Planetdescription;
-  activeWindow: boolean;
-}> = ({ item, activeWindow }) => {
+const SideBar: FC<{ item: Planetdescription; activeWindow: boolean }> = ({
+  item,
+  activeWindow,
+}) => {
   return (
     <FunctionalContext.Consumer>
       {({ closeWindow }) => {

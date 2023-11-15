@@ -1,43 +1,38 @@
 import { FC } from 'react';
-// import { useDispatch } from 'react-redux';
-import { FunctionalContext, MyContext } from '../../Mycontext/MyContext';
-// import { updateQueryStringCHECK } from '../../store/planetSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { reducerState } from '../../assets/types';
+import { FunctionalContext } from '../../Mycontext/MyContext';
+import { updateQueryString } from '../../store/stateSlice';
 
 const MyInput: FC = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const queryString = useSelector(
+    (state: reducerState) => state.state.queryString
+  );
+
   return (
-    <MyContext.Consumer>
-      {({ state }) => {
+    <FunctionalContext.Consumer>
+      {({ updateData }) => {
         return (
-          <FunctionalContext.Consumer>
-            {({ updateData, updateQueryString }) => {
-              return (
-                <form
-                  className="text-field__group"
-                  onSubmit={(e) => updateData(e)}
-                >
-                  <input
-                    type="input"
-                    value={state.queryString}
-                    className="text-field__input"
-                    onChange={(e) => updateQueryString(e)}
-                    // onChange={(e) => {
-                    //   e.preventDefault();
-                    //   dispatch(
-                    //     updateQueryStringCHECK({
-                    //       queryString: (e.target as HTMLInputElement).value,
-                    //     })
-                    //   );
-                    // }}
-                  />
-                  <button className="text-field__btn">Find</button>
-                </form>
-              );
-            }}
-          </FunctionalContext.Consumer>
+          <form className="text-field__group" onSubmit={(e) => updateData(e)}>
+            <input
+              type="input"
+              value={queryString}
+              className="text-field__input"
+              onChange={(e) => {
+                e.preventDefault();
+                dispatch(
+                  updateQueryString({
+                    queryString: (e.target as HTMLInputElement).value,
+                  })
+                );
+              }}
+            />
+            <button className="text-field__btn">Find</button>
+          </form>
         );
       }}
-    </MyContext.Consumer>
+    </FunctionalContext.Consumer>
   );
 };
 

@@ -1,7 +1,8 @@
-import { Planetdescription } from '../../assets/types';
+import { Planetdescription, reducerState } from '../../assets/types';
 import { FC } from 'react';
 import { Link } from 'react-router-dom';
-import { FunctionalContext, MyContext } from '../../Mycontext/MyContext';
+import { FunctionalContext } from '../../Mycontext/MyContext';
+import { useSelector } from 'react-redux';
 
 type Props = {
   index: number;
@@ -9,35 +10,29 @@ type Props = {
 };
 
 const Card: FC<Props> = ({ index, description }) => {
+  const state = useSelector((state: reducerState) => state.state);
   return (
-    <MyContext.Consumer>
-      {({ state }) => {
+    <FunctionalContext.Consumer>
+      {({ showInformation }) => {
         return (
-          <FunctionalContext.Consumer>
-            {({ showInformation }) => {
-              return (
-                <Link
-                  to={{
-                    pathname: '' + index,
-                    search:
-                      `?page=${state.pageNumber}&details=` + description.name,
-                  }}
-                >
-                  <div
-                    className="card__item"
-                    onClick={() => showInformation(description.name)}
-                  >
-                    <p>Planet name - {description.name}</p>
-                    <p>Population - {description.population}</p>
-                    <p>Climate - {description.climate}</p>
-                  </div>
-                </Link>
-              );
+          <Link
+            to={{
+              pathname: '' + index,
+              search: `?page=${state.pageNumber}&details=` + description.name,
             }}
-          </FunctionalContext.Consumer>
+          >
+            <div
+              className="card__item"
+              onClick={() => showInformation(description.name)}
+            >
+              <p>Planet name - {description.name}</p>
+              <p>Population - {description.population}</p>
+              <p>Climate - {description.climate}</p>
+            </div>
+          </Link>
         );
       }}
-    </MyContext.Consumer>
+    </FunctionalContext.Consumer>
   );
 };
 

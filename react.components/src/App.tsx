@@ -1,17 +1,19 @@
-import { Provider } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { reducerState } from './assets/types';
+import '../src/assets/styles/Main.css';
 import FrontPage from './components/FrontPage';
-import { store } from './store/store';
 const App = () => {
+  const state = useSelector((state: reducerState) => state.state);
   return (
-    <BrowserRouter>
-      <Provider store={store}>
+    <div className={(state.theme as string) + ' main_css'}>
+      <BrowserRouter>
         <h1>Planet finder</h1>
         <Routes>
           <Route path="*" element={<FrontPage />} />
         </Routes>
-      </Provider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </div>
   );
 };
 

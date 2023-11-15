@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { PlanetList, State } from '../assets/types';
+import { useEffect, useState } from 'react';
+import { PlanetList, reducerState } from '../assets/types';
 import { doSearch, getAllPlanets } from '../networkActions/networkActions';
 import ErrorBoundary from './ErrorBoundary';
 import ButtonWithError from './UI/ButtonWithError';
@@ -7,146 +7,169 @@ import MyInput from './UI/MyInput';
 import { Pagination } from './UI/Pagination';
 import { Outlet, useNavigate } from 'react-router-dom';
 import SideBarLayout from './UI/SideBarLayout';
-import { FunctionalContext, MyContext } from '../Mycontext/MyContext';
-import { useDispatch } from 'react-redux';
-import { updateStateWithPlanetListResultCHECK } from '../store/planetSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  updatePlanetList,
+  updateQueryString,
+  updateState,
+  updateStateWithPlanetListResult,
+  updateTheme,
+} from '../store/stateSlice';
+import { FunctionalContext } from '../Mycontext/MyContext';
 
 const FrontPage = () => {
-  const [state, setState] = useState<State>({
-    queryString: localStorage.getItem('queryString') as string | 'Enter words',
-    isLoaded: false,
-    noResults: false,
-    next: null,
-    previous: null,
-    items: [],
-    prevBtnDisabled: false,
-    nextBtnDisabled: false,
-    pageNumber: 1,
-  });
-
   const [showSideBar, setShowSideBar] = useState(false);
   const [showSideBarLoader, setShowSideBarLoader] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const state = useSelector((state: reducerState) => state.state);
+
   useEffect(() => {
     if (localStorage.getItem('queryString')) {
-      doSearch(state.queryString).then((result) => {
-        updateStateWithPlanetListResult(result, 1);
+      const querystring = localStorage.getItem('queryString');
+      console.log(querystring);
 
-        () => dispatch(updateStateWithPlanetListResultCHECK(result));
+      doSearch(querystring as string).then((result) => {
+        console.log(result.results);
+        dispatch(
+          updateStateWithPlanetListResult({
+            queryString: { querystring },
+            targetPageNumber: state.pageNumber,
+            next: result.next,
+            previous: result.previous,
+            isLoaded: true,
+            items: result.results,
+            nextBtnDisabled: !result.next,
+            prevBtnDisabled: !result.previous,
+            noResults: result.results.length === 0 ? true : false,
+          })
+        );
       });
     } else {
-      getAllPlanets()
-        .then((result) => {
-          updateStateWithPlanetListResult(result, 1);
-          return result;
-        })
-        .then((result) => {
-          console.log('dispatch');
-          console.log(result);
-          dispatch(
-            updateStateWithPlanetListResultCHECK({
-              result: result,
-              targetPageNumber: state.pageNumber,
-              next: result.next,
-              previous: result.previous,
-              isLoaded: true,
-              items: result.results,
-              nextBtnDisabled: !result.next,
-              prevBtnDisabled: !result.previous,
-              pageNumber: 1,
-              noResults: result.results.length === 0,
-            })
-          );
-        });
+      getAllPlanets().then((result) => {
+        dispatch(
+          updateStateWithPlanetListResult({
+            queryString: 'Enter words',
+            targetPageNumber: state.pageNumber,
+            next: result.next,
+            previous: result.previous,
+            isLoaded: true,
+            items: result.results,
+            nextBtnDisabled: !result.next,
+            prevBtnDisabled: !result.previous,
+            noResults: result.results.length === 0 ? true : false,
+          })
+        );
+      });
     }
   }, []);
 
   const updateData = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setState({ ...state, queryString: state.queryString });
-    setState({
-      ...state,
-      isLoaded: false,
-    });
-    const result = await doSearch(state.queryString);
-    updateStateWithPlanetListResult(result, 1, state.queryString);
-  };
+    dispatch(updateQueryString({ queryString: state.queryString }));
+    dispatch(updateState({ isLoaded: false, noResults: false }));
+    console.log(state);
 
-  const updateQueryString = (e: React.FormEvent) => {
-    e.preventDefault();
-    localStorage.getItem('queryString')
-      ? localStorage.setItem(
-          'queryString',
-          (e.target as HTMLInputElement).value
-        )
-      : localStorage.setItem(
-          'queryString',
-          (e.target as HTMLInputElement).value
-        );
-    setState({ ...state, queryString: (e.target as HTMLInputElement).value });
+    const result = await doSearch(state.queryString);
+    console.log(result);
+    dispatch(
+      updateStateWithPlanetListResult({
+        targetPageNumber: state.pageNumber,
+        next: result.next,
+        previous: result.previous,
+        isLoaded: true,
+        items: result.results,
+        nextBtnDisabled: !result.next,
+        prevBtnDisabled: !result.previous,
+        noResults: result.results.length === 0 ? true : false,
+      })
+    );
   };
 
   const nextPage = () => {
-    if (!state.next) {
-      return;
-    }
     const targetPageNumber = state.pageNumber + 1;
-    togglePage(state.next, targetPageNumber);
+    togglePage(state.next as string, targetPageNumber);
+    const theme = sessionStorage.getItem('theme');
+    dispatch(updateTheme({ theme: theme }));
     setShowSideBar(false);
   };
 
   const prevPage = () => {
-    if (!state.previous) {
-      return;
-    }
     const targetPageNumber = state.pageNumber - 1;
-    togglePage(state.previous, targetPageNumber);
+    togglePage(state.previous as string, targetPageNumber);
+    const theme = sessionStorage.getItem('theme');
+    dispatch(updateTheme({ theme: theme }));
     setShowSideBar(false);
   };
 
   const togglePage = (targetPageUrl: string, targetPageNumber: number) => {
-    setState({ ...state, nextBtnDisabled: true, prevBtnDisabled: true });
-    setState({ ...state, isLoaded: false });
+    dispatch(
+      updateState({
+        nextBtnDisabled: true,
+        prevBtnDisabled: true,
+        isLoaded: false,
+      })
+    );
     getAllPlanets(targetPageUrl).then((result) => {
-      updateStateWithPlanetListResult(result as PlanetList, targetPageNumber);
-    });
-  };
+      console.log('state', state);
+      let navigateTo = '../';
+      if (state.previous || state.next || state.queryString) {
+        navigateTo = navigateTo + '?';
+      }
+      if (state.previous || state.next) {
+        navigateTo = navigateTo + `page=${targetPageNumber}`;
+      }
+      if ((state.previous || state.next) && state.queryString) {
+        navigateTo = navigateTo + `&`;
+      }
+      if (state.queryString) {
+        navigateTo = navigateTo + `search=${state.queryString}`;
+      }
+      navigate(navigateTo);
 
-  const updateStateWithPlanetListResult = (
-    { next, previous, results }: PlanetList,
-    targetPageNumber: number,
-    query?: string
-  ) => {
-    console.log('useEffect');
-    setState({
-      ...state,
-      next,
-      previous,
-      isLoaded: true,
-      items: results,
-      nextBtnDisabled: !next,
-      prevBtnDisabled: !previous,
-      pageNumber: targetPageNumber,
-      noResults: results.length === 0,
+      if (!result.next) {
+        dispatch(
+          updatePlanetList({
+            result: result as PlanetList,
+            pageNumber: targetPageNumber,
+            nextBtnDisabled: true,
+            prevBtnDisabled: false,
+            isLoaded: true,
+            next: result.next,
+            previous: result.previous,
+          })
+        );
+        return;
+      }
+      if (!result.previous) {
+        dispatch(
+          updatePlanetList({
+            result: result as PlanetList,
+            pageNumber: targetPageNumber,
+            nextBtnDisabled: false,
+            prevBtnDisabled: true,
+            isLoaded: true,
+            next: result.next,
+            previous: result.previous,
+          })
+        );
+        return;
+      }
+      dispatch(
+        updatePlanetList({
+          result: result as PlanetList,
+          pageNumber: targetPageNumber,
+          nextBtnDisabled: false,
+          prevBtnDisabled: false,
+          isLoaded: true,
+          next: result.next,
+          previous: result.previous,
+        })
+      );
     });
-    let navigateTo = '../';
-    if (previous || next || query) {
-      navigateTo = navigateTo + '?';
-    }
-    if (previous || next) {
-      navigateTo = navigateTo + `page=${targetPageNumber}`;
-    }
-    if ((previous || next) && query) {
-      navigateTo = navigateTo + `&`;
-    }
-    if (query) {
-      navigateTo = navigateTo + `search=${query}`;
-    }
-    navigate(navigateTo);
   };
 
   const showInformation = (planetName: string) => {
@@ -165,16 +188,36 @@ const FrontPage = () => {
   const closeWindowClick = () => {
     setShowSideBar(false);
   };
-
+  const changeTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.currentTarget.checked) {
+      sessionStorage.setItem('theme', 'dark');
+      dispatch(
+        updateTheme({
+          theme: sessionStorage.getItem('theme'),
+          isLoaded: true,
+        })
+      );
+    } else {
+      sessionStorage.setItem('theme', 'white');
+      dispatch(
+        updateTheme({
+          theme: sessionStorage.getItem('theme'),
+          isLoaded: true,
+        })
+      );
+    }
+  };
   let tryAgain = null;
   if (state.noResults) {
     tryAgain = <p className="try__again">Try again</p>;
   }
 
   let cardsPagination = (
-    <img src="../src/assets/styles/1483.png" alt="loader" />
+    <div className="container_loader">
+      <div className="loader"></div>
+    </div>
   );
-
+  console.log(state.isLoaded);
   if (state.isLoaded) {
     cardsPagination = <Pagination />;
   }
@@ -182,58 +225,53 @@ const FrontPage = () => {
   if (showSideBarLoader) {
     return (
       <ErrorBoundary>
-        <MyContext.Provider value={{ state, setState }}>
-          <FunctionalContext.Provider
-            value={{
-              updateData,
-              updateQueryString,
-              nextPage,
-              showInformation,
-              prevPage,
-              closeWindowClick,
-              closeWindow,
-            }}
-          >
-            <ButtonWithError />
-            <MyInput />
-            {tryAgain}
-            <div className="container">
-              {cardsPagination}
-              <img
-                className="sidebar_loader"
-                src="../src/assets/styles/1483.png"
-              />
-            </div>
-          </FunctionalContext.Provider>
-        </MyContext.Provider>
+        <ButtonWithError />
+        <MyInput />
+        {tryAgain}
+        <div className="container">
+          {cardsPagination}
+          <div className="container_loader">
+            <div className="loader"></div>
+          </div>
+        </div>
       </ErrorBoundary>
     );
   }
 
   return (
     <ErrorBoundary>
-      <MyContext.Provider value={{ state, setState }}>
-        <FunctionalContext.Provider
-          value={{
-            updateData,
-            updateQueryString,
-            nextPage,
-            showInformation,
-            prevPage,
-            closeWindowClick,
-            closeWindow,
-          }}
-        >
-          <ButtonWithError />
-          <MyInput />
-          {tryAgain}
-          <div className="container">
-            {cardsPagination}
-            <SideBarLayout active={showSideBar} />
-            <Outlet />
-          </div>
-        </FunctionalContext.Provider>
-      </MyContext.Provider>
+      <>
+        <label className="switch">
+          <input
+            type="checkbox"
+            onChange={(e) => {
+              changeTheme(e);
+            }}
+          />
+          <span className="slider round"></span>
+        </label>
+        <p>Change theme</p>
+      </>
+
+      <FunctionalContext.Provider
+        value={{
+          nextPage,
+          prevPage,
+          showInformation,
+          closeWindow,
+          closeWindowClick,
+          updateData,
+        }}
+      >
+        <ButtonWithError />
+        <MyInput />
+        {tryAgain}
+        <div className="container">
+          {cardsPagination}
+          {<SideBarLayout active={showSideBar} />}
+          <Outlet />
+        </div>
+      </FunctionalContext.Provider>
     </ErrorBoundary>
   );
 };

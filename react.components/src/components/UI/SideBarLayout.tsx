@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import SideBar from './SideBar';
-import { Planetdescription } from '../../assets/types';
+import { Planetdescription, reducerState } from '../../assets/types';
 import { FC } from 'react';
 import { doSearch } from '../../networkActions/networkActions';
-import { MyContext } from '../../Mycontext/MyContext';
+import { useSelector } from 'react-redux';
 
 const SideBarLayout: FC<{
   active: boolean;
@@ -15,28 +15,23 @@ const SideBarLayout: FC<{
       });
     });
   };
+  const state = useSelector((state: reducerState) => state.state);
 
   return (
-    <MyContext.Consumer>
-      {({ state }) => {
+    <Routes>
+      {state.items.map((item, index) => {
         return (
-          <Routes>
-            {state.items.map((item, index) => {
-              return (
-                <Route
-                  key={`planet-route-${item.name}`}
-                  path={`${index}`}
-                  element={<SideBar item={item} activeWindow={active} />}
-                  loader={({}) => {
-                    return handleLoader(item);
-                  }}
-                />
-              );
-            })}
-          </Routes>
+          <Route
+            key={`planet-route-${item.name}`}
+            path={`${index}`}
+            element={<SideBar item={item} activeWindow={active} />}
+            loader={({}) => {
+              return handleLoader(item);
+            }}
+          />
         );
-      }}
-    </MyContext.Consumer>
+      })}
+    </Routes>
   );
 };
 

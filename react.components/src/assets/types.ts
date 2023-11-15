@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 export type Planetdescription = {
   climate: string;
@@ -27,6 +27,7 @@ export type State = {
   prevBtnDisabled: boolean;
   nextBtnDisabled: boolean;
   pageNumber: number;
+  theme: string;
 };
 
 export interface Parentsconfig {
@@ -59,10 +60,14 @@ export type Mycontext = {
 
 export type FunctionalConext = {
   updateData: (e: React.FormEvent) => void;
-  updateQueryString: (e: React.FormEvent) => void;
+  // updateQueryString: (e: React.FormEvent) => void;
   showInformation: (planetName: string) => void;
   nextPage: () => void;
   prevPage: () => void;
   closeWindowClick: () => void;
   closeWindow: () => void;
+};
+
+export type reducerState = {
+  state: State;
 };
