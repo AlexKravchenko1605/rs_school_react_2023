@@ -6,7 +6,6 @@ const stateSlice = createSlice({
     queryString: localStorage.getItem('queryString')
       ? localStorage.getItem('queryString')
       : '',
-    isLoaded: false,
     noResults: false,
     next: null,
     previous: null,
@@ -20,7 +19,6 @@ const stateSlice = createSlice({
     updateStateWithPlanetListResult(state, action): void {
       state.items = action.payload.items;
       state.pageNumber = action.payload.targetPageNumber;
-      state.isLoaded = action.payload.isLoaded;
       state.noResults = action.payload.noResults;
       state.nextBtnDisabled = action.payload.nextBtnDisabled;
       state.prevBtnDisabled = action.payload.prevBtnDisabled;
@@ -37,13 +35,13 @@ const stateSlice = createSlice({
     updateState(state, action) {
       state.nextBtnDisabled = action.payload.nextBtnDisabled;
       state.prevBtnDisabled = action.payload.prevBtnDisabled;
-      state.isLoaded = action.payload.isLoaded;
+
       state.noResults = action.payload.noResults;
     },
     updatePlanetList(state, action) {
       state.pageNumber = action.payload.pageNumber;
-      state.items = action.payload.result.results;
-      state.isLoaded = action.payload.isLoaded;
+      state.items = action.payload.result;
+
       state.nextBtnDisabled = action.payload.nextBtnDisabled;
       state.prevBtnDisabled = action.payload.prevBtnDisabled;
       state.next = action.payload.next;
@@ -51,7 +49,6 @@ const stateSlice = createSlice({
     },
     updateTheme(state, action) {
       state.theme = action.payload.theme;
-      state.isLoaded = action.payload.isLoaded;
     },
   },
 });
