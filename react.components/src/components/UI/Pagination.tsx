@@ -3,12 +3,10 @@ import CardList from './CardList';
 import { FunctionalContext } from '../../Mycontext/MyContext';
 import { reducerState } from '../../assets/types';
 import { useSelector } from 'react-redux';
-// import { stateNextPage } from '../../store/planetSlice';
 
 export const Pagination: FC = () => {
   const state = useSelector((state: reducerState) => state.state);
 
-  console.log(state);
   return (
     <FunctionalContext.Consumer>
       {({ nextPage, prevPage }) => {

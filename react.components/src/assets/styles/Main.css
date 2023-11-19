@@ -129,6 +129,7 @@ button:active {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  height: calc(100vh - 8rem);
 }
 
 .errorContainer button {
@@ -165,6 +166,7 @@ button:disabled {
   justify-content: center;
   width: 80vw;
   gap: 30px;
+  height: calc(100vh - 14rem);
 }
 .plnate_info {
   display: flex;
@@ -197,7 +199,7 @@ button:disabled {
   background-color: #2121216c;
 }
 .white {
-  background-color: #e8e8e8;
+  background-color: #fff;
 }
 
 /* switcher */

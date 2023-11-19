@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { PlanetList, reducerState } from '../assets/types';
-import { doSearch, getAllPlanets } from '../networkActions/networkActions';
+import { doSearch } from '../networkActions/networkActions';
 import ErrorBoundary from './ErrorBoundary';
 import ButtonWithError from './UI/ButtonWithError';
 import MyInput from './UI/MyInput';
@@ -16,6 +16,11 @@ import {
   updateTheme,
 } from '../store/stateSlice';
 import { FunctionalContext } from '../Mycontext/MyContext';
+import {
+  useDoSearchQuery,
+  useGetPlanetsQuery,
+  useLazyChangePageQuery,
+} from '../store/planetsAPI';
 
 const FrontPage = () => {
   const [showSideBar, setShowSideBar] = useState(false);
@@ -25,53 +30,49 @@ const FrontPage = () => {
   const dispatch = useDispatch();
 
   const state = useSelector((state: reducerState) => state.state);
+  const { data, isLoading } = useGetPlanetsQuery('');
+  const { data: planet } = useDoSearchQuery(
+    localStorage.getItem('queryString') || ''
+  );
+  const [fetchPage, { status }] = useLazyChangePageQuery();
 
   useEffect(() => {
-    if (localStorage.getItem('queryString')) {
-      const querystring = localStorage.getItem('queryString');
-      console.log(querystring);
-
-      doSearch(querystring as string).then((result) => {
-        console.log(result.results);
-        dispatch(
-          updateStateWithPlanetListResult({
-            queryString: { querystring },
-            targetPageNumber: state.pageNumber,
-            next: result.next,
-            previous: result.previous,
-            isLoaded: true,
-            items: result.results,
-            nextBtnDisabled: !result.next,
-            prevBtnDisabled: !result.previous,
-            noResults: result.results.length === 0 ? true : false,
-          })
-        );
-      });
+    if (planet) {
+      dispatch(
+        updateStateWithPlanetListResult({
+          queryString: localStorage.getItem('queryString'),
+          targetPageNumber: state.pageNumber,
+          next: planet.next,
+          previous: planet.previous,
+          items: planet.results,
+          nextBtnDisabled: !planet.next,
+          prevBtnDisabled: !planet.previous,
+          noResults: planet.results.length === 0 ? true : false,
+        })
+      );
     } else {
-      getAllPlanets().then((result) => {
+      if (data) {
         dispatch(
           updateStateWithPlanetListResult({
             queryString: 'Enter words',
             targetPageNumber: state.pageNumber,
-            next: result.next,
-            previous: result.previous,
-            isLoaded: true,
-            items: result.results,
-            nextBtnDisabled: !result.next,
-            prevBtnDisabled: !result.previous,
-            noResults: result.results.length === 0 ? true : false,
+            next: data.next,
+            previous: data.previous,
+            items: data.results,
+            nextBtnDisabled: !data.next,
+            prevBtnDisabled: !data.previous,
+            noResults: data.results.length === 0 ? true : false,
           })
         );
-      });
+      }
     }
-  }, []);
+  }, [data]);
 
   const updateData = async (e: React.FormEvent) => {
     e.preventDefault();
 
     dispatch(updateQueryString({ queryString: state.queryString }));
-    dispatch(updateState({ isLoaded: false, noResults: false }));
-    console.log(state);
+    dispatch(updateState({ noResults: false }));
 
     const result = await doSearch(state.queryString);
     console.log(result);
@@ -80,7 +81,6 @@ const FrontPage = () => {
         targetPageNumber: state.pageNumber,
         next: result.next,
         previous: result.previous,
-        isLoaded: true,
         items: result.results,
         nextBtnDisabled: !result.next,
         prevBtnDisabled: !result.previous,
@@ -105,79 +105,77 @@ const FrontPage = () => {
     setShowSideBar(false);
   };
 
-  const togglePage = (targetPageUrl: string, targetPageNumber: number) => {
+  const togglePage = async (
+    targetPageUrl: string,
+    targetPageNumber: number
+  ) => {
     dispatch(
       updateState({
         nextBtnDisabled: true,
         prevBtnDisabled: true,
-        isLoaded: false,
       })
     );
-    getAllPlanets(targetPageUrl).then((result) => {
-      console.log('state', state);
-      let navigateTo = '../';
-      if (state.previous || state.next || state.queryString) {
-        navigateTo = navigateTo + '?';
-      }
-      if (state.previous || state.next) {
-        navigateTo = navigateTo + `page=${targetPageNumber}`;
-      }
-      if ((state.previous || state.next) && state.queryString) {
-        navigateTo = navigateTo + `&`;
-      }
-      if (state.queryString) {
-        navigateTo = navigateTo + `search=${state.queryString}`;
-      }
-      navigate(navigateTo);
 
-      if (!result.next) {
-        dispatch(
-          updatePlanetList({
-            result: result as PlanetList,
-            pageNumber: targetPageNumber,
-            nextBtnDisabled: true,
-            prevBtnDisabled: false,
-            isLoaded: true,
-            next: result.next,
-            previous: result.previous,
-          })
-        );
-        return;
-      }
-      if (!result.previous) {
-        dispatch(
-          updatePlanetList({
-            result: result as PlanetList,
-            pageNumber: targetPageNumber,
-            nextBtnDisabled: false,
-            prevBtnDisabled: true,
-            isLoaded: true,
-            next: result.next,
-            previous: result.previous,
-          })
-        );
-        return;
-      }
+    const result = await fetchPage(targetPageUrl);
+    let navigateTo = '../';
+    if (state.previous || state.next || state.queryString) {
+      navigateTo = navigateTo + '?';
+    }
+    if (state.previous || state.next) {
+      navigateTo = navigateTo + `page=${targetPageNumber}`;
+    }
+    if ((state.previous || state.next) && state.queryString) {
+      navigateTo = navigateTo + `&`;
+    }
+    if (state.queryString) {
+      navigateTo = navigateTo + `search=${state.queryString}`;
+    }
+    navigate(navigateTo);
+
+    if (!result.data!.next) {
       dispatch(
         updatePlanetList({
-          result: result as PlanetList,
+          result: result.data?.results as unknown as PlanetList,
           pageNumber: targetPageNumber,
-          nextBtnDisabled: false,
+          nextBtnDisabled: true,
           prevBtnDisabled: false,
-          isLoaded: true,
-          next: result.next,
-          previous: result.previous,
+          next: result.data!.next,
+          previous: result.data!.previous,
         })
       );
-    });
+      return;
+    }
+    if (!result.data!.previous) {
+      dispatch(
+        updatePlanetList({
+          result: result.data?.results as unknown as PlanetList,
+          pageNumber: targetPageNumber,
+          nextBtnDisabled: false,
+          prevBtnDisabled: true,
+          next: result.data!.next,
+          previous: result.data!.previous,
+        })
+      );
+      return;
+    }
+
+    dispatch(
+      updatePlanetList({
+        result: result.data?.results as unknown as PlanetList,
+        pageNumber: targetPageNumber,
+        nextBtnDisabled: false,
+        prevBtnDisabled: false,
+        next: result.data!.next,
+        previous: result.data!.previous,
+      })
+    );
   };
 
   const showInformation = (planetName: string) => {
     setShowSideBarLoader(true);
-    doSearch(planetName).then((result) => {
+    doSearch(planetName).then(() => {
       setShowSideBar(true);
       setShowSideBarLoader(false);
-      console.log(result);
     });
   };
   const closeWindow = () => {
@@ -194,7 +192,6 @@ const FrontPage = () => {
       dispatch(
         updateTheme({
           theme: sessionStorage.getItem('theme'),
-          isLoaded: true,
         })
       );
     } else {
@@ -202,7 +199,6 @@ const FrontPage = () => {
       dispatch(
         updateTheme({
           theme: sessionStorage.getItem('theme'),
-          isLoaded: true,
         })
       );
     }
@@ -217,8 +213,15 @@ const FrontPage = () => {
       <div className="loader"></div>
     </div>
   );
-  console.log(state.isLoaded);
-  if (state.isLoaded) {
+
+  if (status === 'pending' && !isLoading) {
+    console.log('pending');
+    cardsPagination = (
+      <div className="container_loader">
+        <div className="loader"></div>
+      </div>
+    );
+  } else if (!isLoading) {
     cardsPagination = <Pagination />;
   }
 

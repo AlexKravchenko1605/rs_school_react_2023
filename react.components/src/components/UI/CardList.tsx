@@ -5,7 +5,7 @@ import { reducerState } from '../../assets/types';
 
 const CardList: FC = () => {
   const state = useSelector((state: reducerState) => state.state);
-  console.log(state);
+
   return (
     <>
       {state.items.length >= 1 && (

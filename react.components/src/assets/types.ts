@@ -19,7 +19,6 @@ export type Planetdescription = {
 
 export type State = {
   queryString: string;
-  isLoaded: boolean;
   noResults: boolean;
   next: string | null;
   previous: string | null;
