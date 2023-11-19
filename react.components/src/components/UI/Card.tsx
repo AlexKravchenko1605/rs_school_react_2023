@@ -11,6 +11,7 @@ type Props = {
 
 const Card: FC<Props> = ({ index, description }) => {
   const state = useSelector((state: reducerState) => state.state);
+
   return (
     <FunctionalContext.Consumer>
       {({ showInformation }) => {

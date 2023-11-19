@@ -20,6 +20,7 @@ import {
   useDoSearchQuery,
   useGetPlanetsQuery,
   useLazyChangePageQuery,
+  useLazyDoSearchQuery,
 } from '../store/planetsAPI';
 
 const FrontPage = () => {
@@ -35,6 +36,7 @@ const FrontPage = () => {
     localStorage.getItem('queryString') || ''
   );
   const [fetchPage, { status }] = useLazyChangePageQuery();
+  const [fetchPlanet] = useLazyDoSearchQuery();
 
   useEffect(() => {
     if (planet) {
@@ -173,7 +175,7 @@ const FrontPage = () => {
 
   const showInformation = (planetName: string) => {
     setShowSideBarLoader(true);
-    doSearch(planetName).then(() => {
+    fetchPlanet(planetName).then(() => {
       setShowSideBar(true);
       setShowSideBarLoader(false);
     });
@@ -215,7 +217,6 @@ const FrontPage = () => {
   );
 
   if (status === 'pending' && !isLoading) {
-    console.log('pending');
     cardsPagination = (
       <div className="container_loader">
         <div className="loader"></div>

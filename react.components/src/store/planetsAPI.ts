@@ -25,5 +25,9 @@ export const planetAPI = createApi({
   }),
 });
 
-export const { useGetPlanetsQuery, useLazyChangePageQuery, useDoSearchQuery } =
-  planetAPI;
+export const {
+  useGetPlanetsQuery,
+  useLazyChangePageQuery,
+  useDoSearchQuery,
+  useLazyDoSearchQuery,
+} = planetAPI;
