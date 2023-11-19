@@ -175,6 +175,8 @@ const FrontPage = () => {
 
   const showInformation = (planetName: string) => {
     setShowSideBarLoader(true);
+    const theme = sessionStorage.getItem('theme');
+    dispatch(updateTheme({ theme: theme }));
     fetchPlanet(planetName).then(() => {
       setShowSideBar(true);
       setShowSideBarLoader(false);
@@ -229,6 +231,18 @@ const FrontPage = () => {
   if (showSideBarLoader) {
     return (
       <ErrorBoundary>
+        <>
+          <label className="switch">
+            <input
+              type="checkbox"
+              onChange={(e) => {
+                changeTheme(e);
+              }}
+            />
+            <span className="slider round"></span>
+          </label>
+          <p>Change theme</p>
+        </>
         <ButtonWithError />
         <MyInput />
         {tryAgain}

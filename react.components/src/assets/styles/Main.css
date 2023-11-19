@@ -166,7 +166,6 @@ button:disabled {
   justify-content: center;
   width: 80vw;
   gap: 30px;
-  height: calc(100vh - 14rem);
 }
 .plnate_info {
   display: flex;
