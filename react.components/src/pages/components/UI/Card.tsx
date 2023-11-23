@@ -1,7 +1,7 @@
-import { Planetdescription, reducerState } from '../../assets/types';
+import { Planetdescription, reducerState } from '../../../assets/types';
 import { FC } from 'react';
-import { Link } from 'react-router-dom';
-import { FunctionalContext } from '../../Mycontext/MyContext';
+import Link from 'next/link';
+import { FunctionalContext } from '../../../Mycontext/MyContext';
 import { useSelector } from 'react-redux';
 
 type Props = {
@@ -17,7 +17,7 @@ const Card: FC<Props> = ({ index, description }) => {
       {({ showInformation }) => {
         return (
           <Link
-            to={{
+            href={{
               pathname: '' + index,
               search: `?page=${state.pageNumber}&details=` + description.name,
             }}

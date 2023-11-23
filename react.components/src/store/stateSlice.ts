@@ -3,9 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const stateSlice = createSlice({
   name: 'state',
   initialState: {
-    queryString: localStorage.getItem('queryString')
-      ? localStorage.getItem('queryString')
-      : '',
+    queryString: '',
     noResults: false,
     next: null,
     previous: null,

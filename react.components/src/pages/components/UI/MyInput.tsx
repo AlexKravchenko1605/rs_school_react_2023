@@ -1,8 +1,9 @@
 import { FC } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { reducerState } from '../../assets/types';
-import { FunctionalContext } from '../../Mycontext/MyContext';
-import { updateQueryString } from '../../store/stateSlice';
+import { reducerState } from '../../../public/assets/types';
+import { FunctionalContext } from '../../../Mycontext/MyContext';
+import { updateQueryString } from '../../../store/stateSlice';
+import style from '../../../public/assets/styles/styles.module.css';
 
 const MyInput: FC = () => {
   const dispatch = useDispatch();
@@ -14,11 +15,14 @@ const MyInput: FC = () => {
     <FunctionalContext.Consumer>
       {({ updateData }) => {
         return (
-          <form className="text-field__group" onSubmit={(e) => updateData(e)}>
+          <form
+            className={style.text_field__group}
+            onSubmit={(e) => updateData(e)}
+          >
             <input
               type="input"
               value={queryString}
-              className="text-field__input"
+              className={style.text_field__input}
               onChange={(e) => {
                 e.preventDefault();
                 dispatch(
@@ -28,7 +32,7 @@ const MyInput: FC = () => {
                 );
               }}
             />
-            <button className="text-field__btn">Find</button>
+            <button className={style.text_field__btn}>Find</button>
           </form>
         );
       }}

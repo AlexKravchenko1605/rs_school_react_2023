@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import CardList from './CardList';
-import { FunctionalContext } from '../../Mycontext/MyContext';
-import { reducerState } from '../../assets/types';
+import { FunctionalContext } from '../../../Mycontext/MyContext';
+import { reducerState } from '../../../assets/types';
 import { useSelector } from 'react-redux';
 
 export const Pagination: FC = () => {

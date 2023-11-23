@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { PlanetList, reducerState } from '../assets/types';
-import { doSearch } from '../networkActions/networkActions';
+import { PlanetList, reducerState } from '../../public/assets/types';
+import { doSearch } from '../../networkActions/networkActions';
 import ErrorBoundary from './ErrorBoundary';
 import ButtonWithError from './UI/ButtonWithError';
 import MyInput from './UI/MyInput';
 import { Pagination } from './UI/Pagination';
-import { Outlet, useNavigate } from 'react-router-dom';
 import SideBarLayout from './UI/SideBarLayout';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,27 +13,27 @@ import {
   updateState,
   updateStateWithPlanetListResult,
   updateTheme,
-} from '../store/stateSlice';
-import { FunctionalContext } from '../Mycontext/MyContext';
+} from '../../store/stateSlice';
+import { FunctionalContext } from '../../Mycontext/MyContext';
 import {
   useDoSearchQuery,
   useGetPlanetsQuery,
   useLazyChangePageQuery,
   useLazyDoSearchQuery,
-} from '../store/planetsAPI';
+} from '../../store/planetsAPI';
+
+import style from '../../public/assets/styles/styles.module.css';
 
 const FrontPage = () => {
   const [showSideBar, setShowSideBar] = useState(false);
   const [showSideBarLoader, setShowSideBarLoader] = useState(false);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const state = useSelector((state: reducerState) => state.state);
   const { data, isLoading } = useGetPlanetsQuery('');
-  const { data: planet } = useDoSearchQuery(
-    localStorage.getItem('queryString') || ''
-  );
+  const { data: planet } = useDoSearchQuery('');
   const [fetchPage, { status }] = useLazyChangePageQuery();
   const [fetchPlanet] = useLazyDoSearchQuery();
 
@@ -119,20 +118,20 @@ const FrontPage = () => {
     );
 
     const result = await fetchPage(targetPageUrl);
-    let navigateTo = '../';
-    if (state.previous || state.next || state.queryString) {
-      navigateTo = navigateTo + '?';
-    }
-    if (state.previous || state.next) {
-      navigateTo = navigateTo + `page=${targetPageNumber}`;
-    }
-    if ((state.previous || state.next) && state.queryString) {
-      navigateTo = navigateTo + `&`;
-    }
-    if (state.queryString) {
-      navigateTo = navigateTo + `search=${state.queryString}`;
-    }
-    navigate(navigateTo);
+    // let navigateTo = '../';
+    // if (state.previous || state.next || state.queryString) {
+    //   navigateTo = navigateTo + '?';
+    // }
+    // if (state.previous || state.next) {
+    //   navigateTo = navigateTo + `page=${targetPageNumber}`;
+    // }
+    // if ((state.previous || state.next) && state.queryString) {
+    //   navigateTo = navigateTo + `&`;
+    // }
+    // if (state.queryString) {
+    //   navigateTo = navigateTo + `search=${state.queryString}`;
+    // }
+    // // navigate(navigateTo);
 
     if (!result.data!.next) {
       dispatch(
@@ -209,19 +208,19 @@ const FrontPage = () => {
   };
   let tryAgain = null;
   if (state.noResults) {
-    tryAgain = <p className="try__again">Try again</p>;
+    tryAgain = <p className={style.try__again}>Try again</p>;
   }
 
   let cardsPagination = (
-    <div className="container_loader">
-      <div className="loader"></div>
+    <div className={style.container_loader}>
+      <div className={style.loader}></div>
     </div>
   );
 
   if (status === 'pending' && !isLoading) {
     cardsPagination = (
-      <div className="container_loader">
-        <div className="loader"></div>
+      <div className={style.container_loader}>
+        <div className={style.loader}></div>
       </div>
     );
   } else if (!isLoading) {
@@ -232,24 +231,24 @@ const FrontPage = () => {
     return (
       <ErrorBoundary>
         <>
-          <label className="switch">
+          <label className={style.switch}>
             <input
               type="checkbox"
               onChange={(e) => {
                 changeTheme(e);
               }}
             />
-            <span className="slider round"></span>
+            <span className={`${style.slider} ${style.round}`}></span>
           </label>
           <p>Change theme</p>
         </>
         <ButtonWithError />
         <MyInput />
         {tryAgain}
-        <div className="container">
+        <div className={style.container}>
           {cardsPagination}
-          <div className="container_loader">
-            <div className="loader"></div>
+          <div className={style.container_loader}>
+            <div className={style.loader}></div>
           </div>
         </div>
       </ErrorBoundary>
@@ -259,14 +258,14 @@ const FrontPage = () => {
   return (
     <ErrorBoundary>
       <>
-        <label className="switch">
+        <label className={style.switch}>
           <input
             type="checkbox"
             onChange={(e) => {
               changeTheme(e);
             }}
           />
-          <span className="slider round"></span>
+          <span className={`${style.slider} ${style.round}`}></span>
         </label>
         <p>Change theme</p>
       </>
@@ -284,10 +283,10 @@ const FrontPage = () => {
         <ButtonWithError />
         <MyInput />
         {tryAgain}
-        <div className="container">
+        <div className={style.container}>
           {cardsPagination}
           {<SideBarLayout active={showSideBar} />}
-          <Outlet />
+          {/* <Outlet /> */}
         </div>
       </FunctionalContext.Provider>
     </ErrorBoundary>

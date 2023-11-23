@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { Planetdescription } from '../../assets/types';
-import { FunctionalContext } from '../../Mycontext/MyContext';
+import { Planetdescription } from '../../../assets/types';
+import { FunctionalContext } from '../../../Mycontext/MyContext';
 
 const SideBar: FC<{ item: Planetdescription; activeWindow: boolean }> = ({
   item,
