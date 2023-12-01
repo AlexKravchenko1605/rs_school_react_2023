@@ -1,7 +1,7 @@
 .decor {
   position: relative;
   max-width: 400px;
-  margin: 50px auto 0;
+  margin: 19px auto 0;
   background: white;
   border-radius: 30px;
 }
@@ -21,7 +21,11 @@
   border-radius: 20px;
   font-family: inherit;
 }
-.form-inner input[type='submit'] {
+.form-inner button[type='submit'] {
+  width: 100%;
+  border-width: 0;
+  border-radius: 20px;
+  padding: 9px 20px;
   margin-top: 30px;
   background: #115b5e;
   border-bottom: 4px solid #115b5e;

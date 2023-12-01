@@ -1,7 +1,9 @@
 * {
   box-sizing: border-box;
 }
+html,
 body {
+  height: 100%;
   background: #115b5e;
   margin: 0;
   padding: 0;
@@ -35,6 +37,18 @@ a {
   text-decoration: none;
   color: #f9fcff;
   text-transform: uppercase;
+}
+
+button:disabled {
+  background-color: black;
+}
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+main {
+  flex: 1 1 auto;
 }
 
 @media (max-width: 440px) {
