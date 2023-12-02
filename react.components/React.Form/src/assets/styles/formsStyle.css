@@ -65,3 +65,10 @@ label {
   font-size: 17px;
   padding-bottom: 0;
 }
+
+.error_message {
+  color: red;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+}
